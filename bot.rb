@@ -1,9 +1,11 @@
+#!/user/bin/env ruby
+
 require 'telegram/bot'
 require 'faraday'
 require 'httparty'
 require './helpers.rb'
 
-token = "7164823053:AAFihI-z6dLImf-1z0w31jb96Melhm6-WYM"
+token = "7164823053:AAFihI-z6dLImf-1z0w31jb96Melhm6-WYM" # ENV['TOKEN']
 
 Telegram::Bot::Client.run(token) do |bot|
   bot.listen do |message|
