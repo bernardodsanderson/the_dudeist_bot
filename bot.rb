@@ -1,6 +1,5 @@
 require 'telegram/bot'
 require 'faraday'
-require 'json'
 require 'httparty'
 require './helpers.rb'
 
@@ -26,18 +25,18 @@ Telegram::Bot::Client.run(token) do |bot|
           meditation_time = response.text.to_i * 60
 
           # Send an image
-          photo_path = "/path/to/image.jpg"
+          photo_path = "./meditation.jpg"
           bot.api.send_photo(chat_id: message.chat.id, photo: Faraday::UploadIO.new(photo_path, 'image/jpeg'))
 
           # Send an mp3 file
-          audio_path = "/path/to/audio.mp3"
+          audio_path = "./meditation.mp3"
           bot.api.send_audio(chat_id: message.chat.id, audio: Faraday::UploadIO.new(audio_path, 'audio/mpeg'))
 
           # Start the timer
           sleep meditation_time
 
           # Send a message when the timer is done
-          bot.api.send_message(chat_id: message.chat.id, text: "Done")
+          bot.api.send_message(chat_id: message.chat.id, text: "Far out! Your meditation is complete.")
         else
           # If the response is not a valid number, ask again
           bot.api.send_message(chat_id: message.chat.id, text: "Please enter a valid number", reply_markup: keyboard_markup)
