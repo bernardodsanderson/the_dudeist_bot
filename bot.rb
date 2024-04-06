@@ -46,7 +46,7 @@ Telegram::Bot::Client.run(token) do |bot|
     # LEBOWSKI QUOTES
     when '/lebowski', 'lebowski quote', 'Lebowski Quote'
       # Give a random quote for now
-      url = 'https://www.thebiglebow.ski/api/v1/random'
+      url = 'https://www.thebiglebow.ski/api/v1/random/favorite'
       response = HTTParty.get(url)
 
       bot.api.send_photo(chat_id: message.chat.id, photo: response.parsed_response['still_with_text'])
