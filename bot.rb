@@ -10,8 +10,20 @@ token = ENV['TOKEN']
 Telegram::Bot::Client.run(token) do |bot|
   bot.listen do |message|
     case message
-    when Telegram::Bot::Types::InlineQuery
-      # nothing for now
+    when Telegram::Bot::Types::CallbackQuery
+      # Here you can handle your callbacks from inline buttons
+      case message.data
+      when 'timer1'
+        run_meditation_timer(bot, message, 1)
+      when 'timer3'
+        run_meditation_timer(bot, message, 3)
+      when 'timer5'
+        run_meditation_timer(bot, message, 5)
+      when 'timer10'
+        run_meditation_timer(bot, message, 10)
+      when 'timer20'
+        run_meditation_timer(bot, message, 20)
+      end
     when Telegram::Bot::Types::Message
       case message.text
         # START
@@ -21,37 +33,15 @@ Telegram::Bot::Client.run(token) do |bot|
         when '/meditation', 'meditation', 'Meditation'
     
           # Ask how long they want to meditate
-          bot.api.send_message(chat_id: message.chat.id, text: "How long would you like to meditate? (in minutes)")
-    
-          # Listen for the user's response
-          bot.listen do |response|
-            # Check if the response is a valid number
-            if response.text.to_i.to_s == response.text
-              # Convert the response to an integer and calculate the time in seconds
-              meditation_time = response.text.to_i. * 60
-    
-              # Send a message that it's starting
-              bot.api.send_message(chat_id: message.chat.id, text: "Timer start now 🧘")
-    
-              # Send an image
-              photo_path = "./meditation.jpg"
-              bot.api.send_photo(chat_id: message.chat.id, photo: Faraday::UploadIO.new(photo_path, 'image/jpeg'))
-    
-              # Send an mp3 file
-              audio_path = "./meditation.mp3"
-              bot.api.send_audio(chat_id: message.chat.id, audio: Faraday::UploadIO.new(audio_path, 'audio/mpeg'))
-              # bot.api.send_message(chat_id: message.chat.id, text: 'https://www.youtube.com/watch?v=0Ni00XDSd6E')
-    
-              # Start the timer
-              sleep meditation_time
-    
-              # Send a message when the timer is done
-              bot.api.send_message(chat_id: message.chat.id, text: "Far out! Your meditation is complete. 🚶")
-            else
-              # If the response is not a valid number, ask again
-              bot.api.send_message(chat_id: message.chat.id, text: "Please enter a valid number")
-            end
-          end
+          kb = [[
+            Telegram::Bot::Types::InlineKeyboardButton.new(text: '1', callback_data: 'timer1'),
+            Telegram::Bot::Types::InlineKeyboardButton.new(text: '3', callback_data: 'timer3'),
+            Telegram::Bot::Types::InlineKeyboardButton.new(text: '5', callback_data: 'timer5'),
+            Telegram::Bot::Types::InlineKeyboardButton.new(text: '10', callback_data: 'timer10'),
+            Telegram::Bot::Types::InlineKeyboardButton.new(text: '20', callback_data: 'timer20')
+          ]]
+          markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
+          bot.api.send_message(chat_id: message.chat.id, text: "How long would you like to meditate? (in minutes)", reply_markup: markup)
         # LEBOWSKI QUOTES
         when '/lebowski', 'lebowski quote', 'Lebowski Quote'
           # Give a random quote for now
