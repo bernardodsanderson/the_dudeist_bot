@@ -65,6 +65,8 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.send_message(chat_id: message.chat.id, text: "Tao is the way, #{message.from.first_name}")
         # THE DUDE TESTAMENT
         when '/testament', 'the dude testament', 'The Dude Testament'
+          doc_path = "./dude_testament.pdf"
+          bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'application/pdf'))
           bot.api.send_message(chat_id: message.chat.id, text: "Were you listening to The Dude's Testament?")
         # STOP
         when '/stop', 'stop', 'Stop'
