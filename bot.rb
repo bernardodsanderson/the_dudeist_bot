@@ -31,7 +31,7 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.send_message(chat_id: message.chat.id, text: "Right on, #{message.from.first_name}", reply_markup: keyboard_markup)
         # MEDITATION
         when '/meditation', 'meditation', 'Meditation'
-    
+
           # Ask how long they want to meditate
           kb = [[
             Telegram::Bot::Types::InlineKeyboardButton.new(text: '1', callback_data: 'timer1'),
@@ -47,13 +47,18 @@ Telegram::Bot::Client.run(token) do |bot|
           # Give a random quote for now
           url = 'https://www.thebiglebow.ski/api/v1/random/favorite'
           response = HTTParty.get(url)
-    
+
           bot.api.send_photo(chat_id: message.chat.id, photo: response.parsed_response['still_with_text'])
           bot.api.send_message(chat_id: message.chat.id, text: response.parsed_response['quote'], reply_markup: keyboard_markup)
         # CAUCASIAN RECIPE
-        when '/recipe', 'Caucasian recipe', 'Caucasian Recipe'
+        when '/recipe', 'Caucasian recipe', 'Caucasian Recipe', 'White Russian recipe', 'White Russian Recipe'
           # Send back the recipe text and an image
-          bot.api.send_message(chat_id: message.chat.id, text: "Another Caucasian, Gary")
+          photo_path = "./lebowski_drink.jpeg"
+          bot.api.send_photo(chat_id: message.from.id, photo: Faraday::UploadIO.new(photo_path, 'image/jpeg'))
+          bot.api.send_message(chat_id: message.chat.id, text: "
+            1 1/2 ounces chilled vodka\n2/3 ounce Kahlua, or other coffee liqueur\n2/3 ounce light cream")
+          bot.api.send_message(chat_id: message.chat.id, text:
+            "Fill a rocks glass with ice\nPour in two shots of vodka and three shots of Kahlúa\nTop off with milk\nStir and serve")
         # TAO TE CHING
         when '/tao', 'tao', 'Read the Tao'
           # Ask if they want a random verse or pick a specific one
