@@ -39,3 +39,14 @@ def run_meditation_timer(bot, message, time)
   # Send a message when the timer is done
   bot.api.send_message(chat_id: message.from.id, text: "Far out! Your meditation is complete. 🚶")
 end
+
+def tao_verses
+  verses = []
+  (1..81).each_slice(8) do |slice|
+    row = slice.map do |num|
+      Telegram::Bot::Types::InlineKeyboardButton.new(text: num.to_s, callback_data: "#{num}")
+    end
+    verses << row
+  end
+  verses
+end

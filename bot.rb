@@ -12,17 +12,11 @@ Telegram::Bot::Client.run(token) do |bot|
     case message
     when Telegram::Bot::Types::CallbackQuery
       # Handle callbacks
-      case message.data
-      when 'timer1'
-        run_meditation_timer(bot, message, 1)
-      when 'timer3'
-        run_meditation_timer(bot, message, 3)
-      when 'timer5'
-        run_meditation_timer(bot, message, 5)
-      when 'timer10'
-        run_meditation_timer(bot, message, 10)
-      when 'timer20'
-        run_meditation_timer(bot, message, 20)
+      case message.data.to_i
+      when 1..81
+        verse = "tao/#{message.data}.md"
+        text = File.read(verse)
+        bot.api.send_message(chat_id: message.from.id, text: text, parse_mode: 'Markdown', reply_markup: keyboard_markup)
       end
     when Telegram::Bot::Types::Message
       case message.text
@@ -33,15 +27,7 @@ Telegram::Bot::Client.run(token) do |bot|
         when '/meditation', 'meditation', 'Meditation'
 
           # Ask how long they want to meditate
-          kb = [[
-            Telegram::Bot::Types::InlineKeyboardButton.new(text: '1', callback_data: 'timer1'),
-            Telegram::Bot::Types::InlineKeyboardButton.new(text: '3', callback_data: 'timer3'),
-            Telegram::Bot::Types::InlineKeyboardButton.new(text: '5', callback_data: 'timer5'),
-            Telegram::Bot::Types::InlineKeyboardButton.new(text: '10', callback_data: 'timer10'),
-            Telegram::Bot::Types::InlineKeyboardButton.new(text: '20', callback_data: 'timer20')
-          ]]
-          markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
-          bot.api.send_message(chat_id: message.chat.id, text: "How long would you like to meditate? (in minutes)", reply_markup: markup)
+          bot.api.send_message(chat_id: message.chat.id, text: "https://www.youtube.com/watch?v=vHheEy-0a7o", reply_markup: keyboard_markup)
         # LEBOWSKI QUOTES
         when '/lebowski', 'lebowski quote', 'Lebowski Quote'
           # Give a random quote for now
@@ -58,11 +44,12 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.send_message(chat_id: message.chat.id, text: "
             1 1/2 ounces chilled vodka\n2/3 ounce Kahlua, or other coffee liqueur\n2/3 ounce light cream")
           bot.api.send_message(chat_id: message.chat.id, text:
-            "Fill a rocks glass with ice\nPour in two shots of vodka and three shots of Kahlúa\nTop off with milk\nStir and serve")
+            "Fill a rocks glass with ice\nPour in two shots of vodka and three shots of Kahlúa\nTop off with milk\nStir and serve", reply_markup: keyboard_markup)
         # TAO TE CHING
         when '/tao', 'tao', 'Read the Tao'
+          markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: tao_verses)
           # Ask if they want a random verse or pick a specific one
-          bot.api.send_message(chat_id: message.chat.id, text: "Tao is the way, #{message.from.first_name}")
+          bot.api.send_message(chat_id: message.chat.id, text: "Pick a verse, #{message.from.first_name}", reply_markup: markup)
         # THE DUDE TESTAMENT
         when '/testament', 'the dude testament', 'The Dude Testament'
           doc_path = "./dude_testament.pdf"
@@ -75,7 +62,7 @@ Telegram::Bot::Client.run(token) do |bot|
         # HELP
         when '/help', 'help', 'Help'
           # Send a list of commands
-          bot.api.send_message(chat_id: message.chat.id, text: "Is this a-what day is it?")
+          bot.api.send_message(chat_id: message.chat.id, text: "Is this a-what day is it?", reply_markup: keyboard_markup)
         end
     end
   end
