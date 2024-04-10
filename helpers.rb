@@ -1,9 +1,9 @@
 def keyboard_markup
   Telegram::Bot::Types::ReplyKeyboardMarkup.new(
     keyboard: [
-      [{ text: 'Meditation' }, { text: 'Lebowski Quote' }],
-      [{ text: 'The Dude Testament' }, { text: 'Read the Tao' }],
-      [{ text: 'White Russian Recipe' }, { text: 'Buy books' }, { text: 'Help' }],
+      [{ text: '🧘 Meditation' }, { text: '💬 Lebowski Quote' }],
+      [{ text: '✍️ The Dude Testament' }, { text: '📕 Read the Tao' }],
+      [{ text: '🍸 White Russian Recipe' }, { text: '📚 Buy books' }, { text: 'ℹ️ Help' }],
     ], one_time_keyboard: true)
 end
 
