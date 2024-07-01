@@ -27,6 +27,9 @@ Telegram::Bot::Client.run(token) do |bot|
       when 'pdf'
         doc_path = "media/dude_testament.pdf"
         bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'application/pdf'))
+      when 'dude de ching'
+        doc_path = "tao/dude_de_ching.md"
+        bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'text/markdown'))
       end
     when Telegram::Bot::Types::Message
       case message.text
@@ -92,7 +95,7 @@ Telegram::Bot::Client.run(token) do |bot|
         # HELP
         when '/help', 'help', 'Help', 'ℹ️ Help'
           # Send a list of commands
-          bot.api.send_message(chat_id: message.chat.id, text: "Is this a-what day is it?\nThis bot is for helping Dudes follow the Dudeist path.", reply_markup: keyboard_markup)
+          bot.api.send_message(chat_id: message.chat.id, text: "Is this a-what day is it?\nThis bot is for helping Dudes follow the Dudeist path. Get ordained and find more information at: https://dudeism.com/", reply_markup: keyboard_markup)
         end
     end
   end
