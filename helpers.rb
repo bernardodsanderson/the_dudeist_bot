@@ -38,6 +38,6 @@ def tao_verses
     end
     verses << row
   end
-  verses << [Telegram::Bot::Types::InlineKeyboardButton.new(text: 'The entire dude de ching', callback_data: "dude de ching")]
+  verses << [Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Random verse', callback_data: "random verse"), Telegram::Bot::Types::InlineKeyboardButton.new(text: 'The entire dude de ching', callback_data: "dude de ching")]
   verses
 end

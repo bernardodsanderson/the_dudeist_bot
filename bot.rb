@@ -27,6 +27,12 @@ Telegram::Bot::Client.run(token) do |bot|
       when 'pdf'
         doc_path = "media/dude_testament.pdf"
         bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'application/pdf'))
+      when 'random verse'
+        verse = "tao/#{rand(1..81)}.md"
+        text = File.read(verse)
+        photo_path = "media/dude.jpeg"
+        bot.api.send_message(chat_id: message.from.id, text: text, parse_mode: 'Markdown', reply_markup: keyboard_markup)
+        bot.api.send_photo(chat_id: message.from.id, photo: Faraday::UploadIO.new(photo_path, 'image/jpeg'))
       when 'dude de ching'
         doc_path = "tao/dude_de_ching.md"
         bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'text/markdown'))
