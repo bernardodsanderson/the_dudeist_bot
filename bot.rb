@@ -44,12 +44,12 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.send_message(chat_id: message.chat.id, text: "Right on, #{message.from.first_name}", reply_markup: keyboard_markup)
         # MEDITATION
         when '/meditation', 'meditation', 'Meditation', '🧘 Meditation'
-          # Ask how long they want to meditate
-          bot.api.send_message(chat_id: message.chat.id, text: "https://www.youtube.com/watch?v=vHheEy-0a7o", reply_markup: keyboard_markup)
+          audio_path = "media/meditation.mp3"
+          bot.api.send_audio(chat_id: message.chat.id, audio: Faraday::UploadIO.new(audio_path, 'audio/mp3'), reply_markup: keyboard_markup)
         # LEBOWSKI QUOTES
         when '/lebowski', 'lebowski quote', 'Lebowski Quote', '💬 Lebowski Quote'
           # Give a random quote for now
-          url = 'https://www.thebiglebow.ski/api/v1/random/favorite'
+          url = 'https://www.thebiglebow.ski/api/v1/random' # https://www.thebiglebow.ski/api/v1/random/favorite
           response = HTTParty.get(url)
 
           bot.api.send_photo(chat_id: message.chat.id, photo: response.parsed_response['still_with_text'])
