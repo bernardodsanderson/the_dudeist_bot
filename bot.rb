@@ -36,6 +36,14 @@ Telegram::Bot::Client.run(token) do |bot|
       when 'dude de ching'
         doc_path = "tao/dude_de_ching.md"
         bot.api.send_document(chat_id: message.from.id, document: Faraday::UploadIO.new(doc_path, 'text/markdown'))
+      when 'random_quote'
+        url = 'https://www.thebiglebow.ski/api/v1/random'
+        response = HTTParty.get(url)
+
+        bot.api.send_photo(chat_id: message.from.id, photo: response.parsed_response['still_with_text'])
+        bot.api.send_message(chat_id: message.from.id, text: response.parsed_response['quote'], reply_markup: keyboard_markup)
+      when 'search_quotes'
+        bot.api.send_message(chat_id: message.from.id, text: "Enter your search term starting with /find followed by what you're looking for.\nFor example: /find careful man", reply_markup: keyboard_markup)
       end
     when Telegram::Bot::Types::Message
       case message.text
@@ -48,12 +56,30 @@ Telegram::Bot::Client.run(token) do |bot|
           bot.api.send_audio(chat_id: message.chat.id, audio: Faraday::UploadIO.new(audio_path, 'audio/mp3'), reply_markup: keyboard_markup)
         # LEBOWSKI QUOTES
         when '/lebowski', 'lebowski quote', 'Lebowski Quote', '💬 Lebowski Quote'
-          # Give a random quote for now
-          url = 'https://www.thebiglebow.ski/api/v1/random' # https://www.thebiglebow.ski/api/v1/random/favorite
+          kb = [
+            [
+              Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Random Quote', callback_data: 'random_quote'),
+              Telegram::Bot::Types::InlineKeyboardButton.new(text: 'Search Quotes', callback_data: 'search_quotes')
+            ]
+          ]
+          markup = Telegram::Bot::Types::InlineKeyboardMarkup.new(inline_keyboard: kb)
+          bot.api.send_message(chat_id: message.chat.id, text: "What do you want to do?", reply_markup: markup)
+        when '/search', 'Search quotes', 'search quotes', '🔍 Search Quotes'
+          bot.api.send_message(chat_id: message.chat.id, text: "Enter your search term starting with /find followed by what you're looking for.\nFor example: /find careful man", reply_markup: keyboard_markup)
+        when /^\/find (.+)/
+          search_term = message.text.split('/find ').last
+          url = "https://www.thebiglebow.ski/api/v1/search/#{URI.encode_www_form_component(search_term)}"
           response = HTTParty.get(url)
 
-          bot.api.send_photo(chat_id: message.chat.id, photo: response.parsed_response['still_with_text'])
-          bot.api.send_message(chat_id: message.chat.id, text: response.parsed_response['quote'], reply_markup: keyboard_markup)
+          if response.parsed_response.empty?
+            bot.api.send_message(chat_id: message.chat.id, text: "Sorry, no quotes found for '#{search_term}'", reply_markup: keyboard_markup)
+          else
+            quote = response.parsed_response.first
+            if quote['still_with_text']
+              bot.api.send_photo(chat_id: message.chat.id, photo: quote['still_with_text'])
+            end
+            bot.api.send_message(chat_id: message.chat.id, text: quote['quote'], reply_markup: keyboard_markup)
+          end
         # CAUCASIAN RECIPE
         when '/recipe', 'Caucasian recipe', 'Caucasian Recipe', 'White Russian recipe', 'White Russian Recipe', '🍸 White Russian Recipe'
           # Send back the recipe text and an image
